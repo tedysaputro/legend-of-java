@@ -3,14 +3,16 @@ package com.subrutin.game.legendofjava;
 import javax.swing.JPanel;
 import javax.swing.plaf.DimensionUIResource;
 
+import com.subrutin.game.legendofjava.entity.Player;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 
 public class GamePanel extends JPanel implements Runnable {
     // screen settings
-    final int ORIGINAL_TILE_SIZE = 16; // 16x16 tile
+    public final int ORIGINAL_TILE_SIZE = 16; // 16x16 tile
     final int SCALE = 3;
-    final int TILE_SIZE = ORIGINAL_TILE_SIZE * SCALE; // 48x48 tile
+    public final int TILE_SIZE = ORIGINAL_TILE_SIZE * SCALE; // 48x48 tile
     final int MAX_SCREEN_COL = 16;
     final int MAX_SCREEN_ROW = 12;
     final int SCREEN_WIDTH = TILE_SIZE * MAX_SCREEN_COL;// 768 pixels
@@ -18,6 +20,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     KeyHandler keyHandler;
     Thread gameThread;
+    Player player;
 
     // set players default position
     int playerX = 100;
@@ -27,11 +30,12 @@ public class GamePanel extends JPanel implements Runnable {
 
     public GamePanel() {
         this.setPreferredSize(new DimensionUIResource(SCREEN_WIDTH, SCREEN_HEIGHT));
-        this.setBackground(java.awt.Color.black);
+        this.setBackground(java.awt.Color.WHITE);
         this.setDoubleBuffered(true);
         keyHandler = new KeyHandler();
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
+        player = new Player(this, keyHandler);
     }
 
     public void startGameThread() {
@@ -69,23 +73,14 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        if (keyHandler.upPressed) {
-            playerY -= 1;
-        } else if (keyHandler.downPressed) {
-            playerY += 1;
-        } else if (keyHandler.leftPressed) {
-            playerX -= 1;
-        } else if (keyHandler.rightPressed) {
-            playerX += 1;
-        }
+        player.update();
     }
 
     public void paintComponent(java.awt.Graphics g) {
         // every change you need call this method to update the screen
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        g2.setColor(Color.WHITE);
-        g2.fillRect(playerX, playerY, TILE_SIZE, TILE_SIZE);
+        player.draw(g2);
         g2.dispose();
     }
 }
