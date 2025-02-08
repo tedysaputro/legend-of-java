@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 import javax.swing.plaf.DimensionUIResource;
 
 import com.subrutin.game.legendofjava.entity.Player;
+import com.subrutin.game.legendofjava.tile.TileManager;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -13,14 +14,15 @@ public class GamePanel extends JPanel implements Runnable {
     public final int ORIGINAL_TILE_SIZE = 16; // 16x16 tile
     final int SCALE = 3;
     public final int TILE_SIZE = ORIGINAL_TILE_SIZE * SCALE; // 48x48 tile
-    final int MAX_SCREEN_COL = 16;
-    final int MAX_SCREEN_ROW = 12;
+    public final int MAX_SCREEN_COL = 16;
+    public final int MAX_SCREEN_ROW = 12;
     final int SCREEN_WIDTH = TILE_SIZE * MAX_SCREEN_COL;// 768 pixels
     final int SCREEN_HEIGHT = TILE_SIZE * MAX_SCREEN_ROW;// 576 pixels
 
     KeyHandler keyHandler;
     Thread gameThread;
     Player player;
+    TileManager tileManager;
 
     // set players default position
     int playerX = 100;
@@ -36,6 +38,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
         player = new Player(this, keyHandler);
+        tileManager = new TileManager(this);
     }
 
     public void startGameThread() {
@@ -80,7 +83,9 @@ public class GamePanel extends JPanel implements Runnable {
         // every change you need call this method to update the screen
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        tileManager.draw(g2);
         player.draw(g2);
+
         g2.dispose();
     }
 }
